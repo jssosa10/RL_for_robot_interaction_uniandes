@@ -22,43 +22,19 @@ from tf_agents.utils import common
 
 def build_actor_net(observation_space,action_space):
     out_dim=1 if action_space.shape ==() else action_space.shape
-    # model_actor = keras.Sequential([
-    #     # keras.layers.Conv2D(32, (3, 3), input_shape=observation_space),
-    #     # keras.layers.BatchNormalization(),
-    #     # keras.layers.Activation("relu"),
-    #     # keras.layers.Conv2D(64, (3, 3), strides=[2, 2], use_bias=False),
-    #     # keras.layers.BatchNormalization(),
-    #     # keras.layers.Activation("relu"),
-    #     # keras.layers.Conv2D(64, (3, 3), use_bias=False),
-    #     # keras.layers.BatchNormalization(),
-    #     # keras.layers.Activation("relu"),
-    #     # keras.layers.Flatten(),
-    #     keras.layers.Dense(7 * 7 * 64, input_shape=observation_space.shape,activation=tf.keras.activations.tanh, use_bias=False),
-    #     keras.layers.Dense(512, activation=tf.keras.activations.tanh, use_bias=False),
-    #     # keras.layers.Dropout(rate=0.6),
-    #     keras.layers.Dense(out_dim, activation=tf.keras.activations.softmax)])
-
     fc_layers2 = [7*7*64,512]
-    actor_net = actor_distribution_network.ActorDistributionNetwork(observation_space,action_space,fc_layer_params=fc_layers2)
-    # def actor_net(observations,action_spec):
-    #
-    #     return model_actor(observations)
-
+    actor_net = actor_distribution_network.ActorDistributionNetwork(observation_space,action_space,fc_layer_params = fc_layers2)
     return actor_net
 
 pass
-def build_value_net(observation_space,action_space):
-    out_dim = 1 if action_space.shape == () else action_space.shape
+def build_value_net(observation_space):
     fc_layesr=[7*7*64,512]
-    # fc_layers2=[keras.layers.Dense(7 * 7 * 64,input_shape=observation_space.shape, activation=tf.nn.tanh,
-    #           use_bias=False),
-    #           keras.layers.Dense(512, activation=tf.nn.tanh, use_bias=False)]
     q_net =ValueNetwork(observation_space
                         ,fc_layer_params=fc_layesr,
                     dropout_layer_params=[1,3])
 
     return q_net
-
+#   To measure Performance
 def compute_avg_return(environment, policy, num_episodes=10):
 
   total_return = 0.0
@@ -98,7 +74,7 @@ def compute_avg_return(environment, policy, num_episodes=10):
 
 
 if __name__ == '__main__':
-
+    # En teoría deberia estar haceindo todo lo que pueda en la GPU no se si lo esta haciendo
     with tf.device("GPU:0"):
 
         env_name = 'CartPole-v0'
@@ -114,7 +90,7 @@ if __name__ == '__main__':
 
 
         agent_net=build_actor_net(train_env.observation_spec(),train_env.action_spec())
-        value_net= build_value_net(train_env.observation_spec(),train_env.action_spec())
+        value_net= build_value_net(train_env.observation_spec())
 
         train_step_counter = tf.compat.v2.Variable(0)
 
